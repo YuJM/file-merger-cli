@@ -1,7 +1,7 @@
 {
-  "name": "file-merger",
+  "name": "file-merger-cli",
   "version": "0.2.0",
-  "description": "file merge tool cli",
+  "description": "The File Merger CLI is a command-line tool that merges files within a specified directory by extension and outputs the file structure as JSON.",
   "main": "dist/index.js",
   "bin": {
     "file-merger": "./bin/cli.js"
@@ -12,7 +12,7 @@
     "prepublishOnly": "npm run build",
     "publish": "npm publish"
   },
-  "keywords": ["cli", "file-merger"],
+  "keywords": ["cli", "file-merger", "file", "tool", "merge"],
   "author": "YuJM",
   "license": "MIT",
   "dependencies": {
