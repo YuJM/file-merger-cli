@@ -1,5 +1,11 @@
 # file-merger-cli
 
+## 0.3.3
+
+### Patch Changes
+
+- change public
+
 ## 0.3.2
 
 ### Patch Changes
