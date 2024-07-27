@@ -1,0 +1,27 @@
+{
+  "name": "file-merger",
+  "version": "0.1.0",
+  "description": "file merge tool cli",
+  "main": "dist/index.js",
+  "bin": {
+    "filem-merger": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["cli", "file-merger"],
+  "author": "YuJM",
+  "license": "MIT",
+  "dependencies": {
+    "minimatch": "10.0.1",
+    "winston": "3.13.1",
+    "yargs": "17.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "20.14.12",
+    "@types/yargs": "17.0.32",
+    "typescript": "5.5.4"
+  }
+}
