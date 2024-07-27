@@ -1,4 +1,3 @@
-// config.ts
 export const config = {
     logFile: "merge.log",
     errorLogFile: "merge_error.log",

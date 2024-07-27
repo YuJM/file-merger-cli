@@ -74,8 +74,11 @@ async function main() {
       console.log(`Log file: ${path.resolve(config.logFile)}`);
     }
   } catch (error: unknown) {
+    console.error(error);
     if (error instanceof Error) {
       logger.error(`Fatal error: ${error.message}`);
+    }else{
+      logger.error(`Fatal error: ${String(error)}`);
     }
     console.error(`Error occurred. Error log file: ${path.resolve(config.errorLogFile)}`);
     process.exit(1);

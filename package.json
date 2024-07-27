@@ -1,6 +1,6 @@
 {
   "name": "file-merger-cli",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "The File Merger CLI is a command-line tool that merges files within a specified directory by extension and outputs the file structure as JSON.",
   "main": "dist/index.js",
   "bin": {
@@ -12,11 +12,25 @@
     "start": "node dist/index.js",
     "prepublishOnly": "npm run build",
     "publish": "npm publish",
-    "test": "ts-node src/index.ts --directory=src"
+    "change-check": "changeset",
+    "update-version": "changeset version"
   },
-  "keywords": ["cli", "file-merger", "file", "tool", "merge"],
+  "keywords": [
+    "cli",
+    "file-merger",
+    "file",
+    "tool",
+    "merge"
+  ],
   "author": "YuJM",
   "license": "MIT",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": "./dist.index.js"
+  },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "minimatch": "10.0.1",
     "winston": "3.13.1",
@@ -24,6 +38,7 @@
   },
   "devDependencies": {
     "ts-node": "^10.9.2",
+    "@changesets/cli": "^2.27.7",
     "@types/node": "20.14.12",
     "@types/yargs": "17.0.32",
     "typescript": "5.5.4"

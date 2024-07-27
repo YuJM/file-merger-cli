@@ -86,7 +86,7 @@ async function mergeFiles(
         try {
             const content = await fs.readFile(fullPath, "utf-8");
             extensionMap[ext].push(
-                `// ${filePath}\n${content}\n// End of ${filePath}`
+                `/*----${filePath}---*/\n${content}\n/*---End of ${filePath}---*/\n`
             );
         } catch (error) {
             const errorMsg = `Error reading file ${fullPath}: ${error}`;
@@ -121,8 +121,10 @@ async function writeMergedFiles(extensionMap: Record<string, string[]>) {
         try {
             const writeStream = createWriteStream(outputFile);
             for (const content of files) {
+                const cleanedContent = content
+                    .replace(/\n{2,}/g, '\n') // 3개 이상의 연속된 줄바꿈을 2개로 줄임
                 await new Promise<void>((resolve, reject) => {
-                    writeStream.write(content + "\n\n", (error) => {
+                    writeStream.write(cleanedContent, (error) => {
                         if (error) reject(error);
                         else resolve();
                     });
