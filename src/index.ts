@@ -273,4 +273,6 @@ function main() {
   console.log(`Error log file: ${path.resolve("merge_error.log")}`);
 }
 
-main();
+if (require.main === module) {
+  main();
+}
