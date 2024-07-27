@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import {createWriteStream} from "fs";
 import micromatch from "micromatch";
-import { logger} from "./logger";
+import {logger} from "./logger";
 import {config} from "./config";
 
 
@@ -29,38 +29,23 @@ async function readGitignore(filePath: string): Promise<Set<string>> {
     }
 }
 
+async function getAllFiles(dir: string): Promise<string[]> {
+    const files = await fs.readdir(dir, {withFileTypes: true});
+    const paths = await Promise.all(files.map(async (file) => {
+        const path = `${dir}/${file.name}`;
+        return file.isDirectory() ? getAllFiles(path) : path;
+    }));
+    return paths.flat();
+}
+
 async function ignoreFiles(
     directory: string,
     ignorePatterns: string[],
-    ignoreHidden: boolean
 ): Promise<string[]> {
-    const includedFiles: string[] = [];
-
-    async function walk(dir: string) {
-        const files = await fs.readdir(dir);
-        for (const file of files) {
-            const filePath = path.join(dir, file);
-            const relativePath = path.relative(directory, filePath);
-            const stat = await fs.stat(filePath);
-
-            if (stat.isDirectory()) {
-                if (file !== "output" && !(ignoreHidden && file.startsWith("."))) {
-                    await walk(filePath);
-                }
-            } else {
-                const isHidden = path.basename(relativePath).startsWith(".");
-                if (
-                    !ignorePatterns.some((pattern) => micromatch.isMatch(relativePath, pattern, {basename: true})) &&
-                    !(ignoreHidden && isHidden)
-                ) {
-                    includedFiles.push(relativePath);
-                }
-            }
-        }
-    }
-
-    await walk(directory);
-    return includedFiles;
+    const allFiles = await getAllFiles(directory);
+    return micromatch.not(allFiles, [".*", "__*", ...ignorePatterns], {
+        basename: true
+    });
 }
 
 async function mergeFiles(
@@ -71,7 +56,6 @@ async function mergeFiles(
     const dirMap: Record<string, string[]> = {};
 
     for (const filePath of includedFiles) {
-        const fullPath = path.join(directory, filePath);
         const dirName = path.dirname(filePath);
         if (!dirMap[dirName]) {
             dirMap[dirName] = [];
@@ -84,12 +68,15 @@ async function mergeFiles(
         }
 
         try {
-            const content = await fs.readFile(fullPath, "utf-8");
+            const content = await fs.readFile(filePath, "utf-8");
+            const filename = path.relative(directory, filePath);
+            const isPython = /\.py$/.test(filename);
+            const commentObj = isPython ? config.comment.py : config.comment.default;
             extensionMap[ext].push(
-                `/*----${filePath}---*/\n${content}\n/*---End of ${filePath}---*/\n`
+                `${commentObj.start}---(${filename})---${commentObj.end}\n${content}\n${commentObj.start}---End of (${filename})---${commentObj.end}\n`
             );
         } catch (error) {
-            const errorMsg = `Error reading file ${fullPath}: ${error}`;
+            const errorMsg = `Error reading file ${filePath}: ${error}`;
             logger.error(errorMsg);
             extensionMap[ext].push(
                 `// ${filePath}\n// Unable to read file content\n// End of ${filePath}`
@@ -102,8 +89,8 @@ async function mergeFiles(
 
 async function cleanOutputFolder() {
     try {
-        await fs.rm(config.outputDir, { recursive: true, force: true });
-        await fs.mkdir(config.outputDir, { recursive: true });
+        await fs.rm(config.outputDir, {recursive: true, force: true});
+        await fs.mkdir(config.outputDir, {recursive: true});
         logger.info("Output folder cleaned and recreated");
     } catch (error) {
         const errorMsg = `Error cleaning output folder: ${error}`;
@@ -177,4 +164,4 @@ async function writeFileStructure(dirMap: Record<string, string[]>) {
     }
 }
 
-export { readGitignore, ignoreFiles, mergeFiles, cleanOutputFolder, writeMergedFiles, writeFileStructure };
+export {readGitignore, ignoreFiles, mergeFiles, cleanOutputFolder, writeMergedFiles, writeFileStructure};

@@ -27,12 +27,11 @@ file-merger <directory> [options]
 
 ### 옵션
 
-- ignore-hidden: 숨겨진 파일과 디렉토리를 무시합니다.
 - log: 로그 파일(merge.log)에 로깅을 활성화합니다.
 - help: 도움말을 표시합니다.
 ### 예시
 ```bash
-file-merger /path/to/your/directory --ignore-hidden --log
+file-merger /path/to/your/directory --log
 ```
 ## 기능
 1. 지정된 디렉토리 내의 모든 파일을 스캔합니다.

@@ -20,11 +20,6 @@ async function main() {
           type: "string",
         });
       })
-      .option("ignore-hidden", {
-        type: "boolean",
-        description: "Ignore hidden files and directories",
-        default: false,
-      })
       .option("log", {
         type: "boolean",
         description: "Enable logging to merge.log file",
@@ -46,13 +41,12 @@ async function main() {
     const ignorePatterns = Array.from(
         new Set([...scriptDirGitignore, ...targetDirGitignore])
     );
-    console.log(ignorePatterns);
+    console.log('ignore patterns:', ignorePatterns);
     const includedFiles = await ignoreFiles(
         directory,
-        ignorePatterns,
-        argv["ignore-hidden"]
+        ignorePatterns
     );
-
+    // console.log(includedFiles);
     await cleanOutputFolder();
     const [extensionMap, dirMap] = await mergeFiles(directory, includedFiles);
     await writeMergedFiles(extensionMap);
