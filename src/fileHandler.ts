@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import {createWriteStream} from "fs";
-import {minimatch} from "minimatch";
+import micromatch from "micromatch";
 import { logger} from "./logger";
 import {config} from "./config";
 
@@ -50,7 +50,7 @@ async function ignoreFiles(
             } else {
                 const isHidden = path.basename(relativePath).startsWith(".");
                 if (
-                    !ignorePatterns.some((pattern) => minimatch(relativePath, pattern)) &&
+                    !ignorePatterns.some((pattern) => micromatch.isMatch(relativePath, pattern, {basename: true})) &&
                     !(ignoreHidden && isHidden)
                 ) {
                     includedFiles.push(relativePath);

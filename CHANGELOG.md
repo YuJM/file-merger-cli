@@ -1,5 +1,11 @@
 # file-merger-cli
 
+## 0.3.4
+
+### Patch Changes
+
+- fix: ignore pattern match
+
 ## 0.3.3
 
 ### Patch Changes

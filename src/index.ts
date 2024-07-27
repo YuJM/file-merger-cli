@@ -46,7 +46,7 @@ async function main() {
     const ignorePatterns = Array.from(
         new Set([...scriptDirGitignore, ...targetDirGitignore])
     );
-
+    console.log(ignorePatterns);
     const includedFiles = await ignoreFiles(
         directory,
         ignorePatterns,
