@@ -1,5 +1,11 @@
 # file-merger-cli
 
+## 0.4.1
+
+### Patch Changes
+
+- fileStructure 수정
+
 ## 0.3.4
 
 ### Patch Changes

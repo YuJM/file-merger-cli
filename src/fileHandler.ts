@@ -127,22 +127,22 @@ async function writeMergedFiles(extensionMap: Record<string, string[]>) {
     }
 }
 
-function createTreeStructure(
-    dirMap: Record<string, string[]>
-): Record<string, any> {
-    const tree: Record<string, any> = {};
+function createTreeStructure(dirMap: Record<string, string[]>, baseDir: string): Record<string, any> {
+    const tree: Record<string, any> = { '.': {} };
     for (const [dirPath, files] of Object.entries(dirMap)) {
-        let current = tree;
-        const normalizedPath = path.normalize(dirPath);
-        const pathParts = normalizedPath.split(path.sep);
+        let current = tree['.'];
+        const relativePath = path.relative(baseDir, dirPath);
+        const pathParts = relativePath.split(path.sep).filter(Boolean);
+
         for (const part of pathParts) {
             if (!current[part]) {
                 current[part] = {};
             }
             current = current[part];
         }
+
         if (files.length > 0) {
-            current["__files__"] = files.map((f) => path.basename(f));
+            current['__files__'] = files.map(f => path.basename(f));
         }
     }
     return tree;
@@ -150,7 +150,8 @@ function createTreeStructure(
 
 async function writeFileStructure(dirMap: Record<string, string[]>) {
     try {
-        const tree = createTreeStructure(dirMap);
+        const baseDir = process.cwd();
+        const tree = createTreeStructure(dirMap, baseDir);
         await fs.writeFile(
             path.join(config.outputDir, "fileStructure.json"),
             JSON.stringify(tree, null, 2),
