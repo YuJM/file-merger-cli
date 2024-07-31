@@ -4,12 +4,13 @@ import os from "os";
 import * as yargs from "yargs";
 import {logger} from "./logger";
 import { config } from "./config";
-import { readGitignore, ignoreFiles, mergeFiles, cleanOutputFolder, writeMergedFiles, writeFileStructure } from "./fileHandler";
+import { readGitignore, ignoreFiles, mergeFiles, cleanOutputFolder, writeMergedFiles, writeFileMap } from "./fileHandler";
 
 interface Arguments {
   directory: string;
   "ignore-hidden": boolean;
   log: boolean;
+  only: string[];
 }
 
 async function main() {
@@ -24,6 +25,10 @@ async function main() {
         type: "boolean",
         description: "Enable logging to merge.log file",
         default: false,
+      }).option("only", {
+        type: "array",
+        description: "Process only specified file extensions",
+        default: [],
       })
       .help("h")
       .parseSync();
@@ -42,15 +47,24 @@ async function main() {
         new Set([...scriptDirGitignore, ...targetDirGitignore])
     );
     console.log('ignore patterns:', ignorePatterns);
-    const includedFiles = await ignoreFiles(
+    const onlyExtensions = (argv as unknown as Arguments).only as string[];
+
+    let includedFiles = await ignoreFiles(
         directory,
         ignorePatterns
     );
+
+    // only 플래그가 지정된 경우 파일 필터링
+    if (onlyExtensions.length > 0) {
+      includedFiles = includedFiles.filter(file =>
+          onlyExtensions.includes(path.extname(file).slice(1).toLowerCase())
+      );
+    }
     // console.log(includedFiles);
     await cleanOutputFolder();
     const [extensionMap, dirMap] = await mergeFiles(directory, includedFiles);
     await writeMergedFiles(extensionMap);
-    await writeFileStructure(dirMap);
+    await writeFileMap(dirMap);
 
     const totalFiles = Object.values(extensionMap).reduce(
         (sum, files) => sum + files.length,

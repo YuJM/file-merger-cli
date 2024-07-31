@@ -148,21 +148,21 @@ function createTreeStructure(dirMap: Record<string, string[]>, baseDir: string):
     return tree;
 }
 
-async function writeFileStructure(dirMap: Record<string, string[]>) {
+async function writeFileMap(dirMap: Record<string, string[]>) {
     try {
         const baseDir = process.cwd();
         const tree = createTreeStructure(dirMap, baseDir);
         await fs.writeFile(
-            path.join(config.outputDir, "fileStructure.json"),
+            path.join(config.outputDir, "fileMap.json"),
             JSON.stringify(tree, null, 2),
             "utf-8"
         );
-        logger.info("File structure JSON created");
+        logger.info("File map JSON created");
     } catch (error) {
-        const errorMsg = `Error creating file structure JSON: ${error}`;
+        const errorMsg = `Error creating file map JSON: ${error}`;
         logger.error(errorMsg);
         throw error;
     }
 }
 
-export {readGitignore, ignoreFiles, mergeFiles, cleanOutputFolder, writeMergedFiles, writeFileStructure};
+export {readGitignore, ignoreFiles, mergeFiles, cleanOutputFolder, writeMergedFiles, writeFileMap};

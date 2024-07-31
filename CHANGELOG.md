@@ -1,5 +1,11 @@
 # file-merger-cli
 
+## 0.5.0
+
+### Minor Changes
+
+- update: --only flag, name change
+
 ## 0.4.1
 
 ### Patch Changes
