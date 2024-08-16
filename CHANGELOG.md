@@ -1,5 +1,11 @@
 # file-merger-cli
 
+## 0.5.1
+
+### Patch Changes
+
+- add output flag
+
 ## 0.5.0
 
 ### Minor Changes
